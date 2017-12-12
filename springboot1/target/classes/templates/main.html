@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta charset="UTF-8" />
+    <title>仪表盘</title>
+    <script th:src="@{js/sockjs.min.js}"></script>
+    <script th:src="@{js/stomp.js}"></script>
+    <script th:src="@{js/jquery-3.1.1.js}"></script>
+    <script th:src="@{js/echarts.min.js}"></script>
+    <script th:src="@{js/my.js}"></script>
+
+</head>
+<body>
+<div  style="width: auto;height: 1200px;">
+    <div id="main" style="height: 1200px;background-color: #4efaa2">
+    </div>
+</div>
+<div  style="width: auto;height: 1200px;">
+    <div id="main2" style="height: 1200px;">
+    </div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function(){
+        bigdata.fn.renderMain();
+    })
+</script>
+</body>
+</html>

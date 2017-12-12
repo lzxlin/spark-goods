@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Spark计算电商商品可视化</title>
+    <link type="text/css" href="bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link type="text/css" href="bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet"/>
+    <link type="text/css" href="css/theme.css" rel="stylesheet"/>
+    <link type="text/css" href="images/icons/css/font-awesome.css" rel="stylesheet"/>
+    <link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'/>
+
+    <script th:src="@{js/sockjs.min.js}"></script>
+    <script th:src="@{js/stomp.js}"></script>
+    <script th:src="@{js/jquery-3.1.1.js}"></script>
+    <script th:src="@{js/echarts.min.js}"></script>
+    <script th:src="@{js/userR.js}"></script>
+    <script th:src="@{js/test.js}"></script>
+
+</head>
+<body>
+
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".navbar-inverse-collapse">
+                <i class="icon-reorder shaded"></i></a><a class="brand" href="/">Spark计算电商商品可视化 </a>
+            <div class="nav-collapse collapse navbar-inverse-collapse">
+                <ul class="nav nav-icons">
+                    <li><a href="#"><i class="icon-eye-open"></i></a></li>
+                    <li><a href="#"><i class="icon-bar-chart"></i></a></li>
+                </ul>
+                <!--  搜索框  -->
+                <form class="navbar-search pull-left input-append" action="#">
+                    <input type="text" class="span3" onchange="searchUserR(this);"/>
+                    <button class="btn" type="button">
+                        <i class="icon-search"></i>
+                    </button>
+                </form>
+
+                <ul class="nav pull-right">
+                    <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown
+                        <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">Item No.A</a></li>
+                            <li><a href="#">Don't Click</a></li>
+                            <li class="divider"></li>
+                            <li class="nav-header">Example Header</li>
+                            <li><a href="#">A Separated link</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#">Support </a></li>
+                    <li class="nav-user dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                        <img src="images/user.png" class="nav-avatar" />
+                        <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">个人主页</a></li>
+                            <li><a href="#">账号设置</a></li>
+                            <li class="divider"></li>
+                            <li><a href="#">注销</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.nav-collapse -->
+        </div>
+    </div>
+    <!-- /navbar-inner -->
+</div>
+
+<div class="wrapper">
+    <div class="container">
+        <div class="row">
+            <div class="span3">
+                <div class="sidebar">
+                    <ul class="widget widget-menu unstyled">
+                        <li class="active"><a href="/"><i class="menu-icon icon-dashboard"></i>主页面
+                        </a></li>
+                        <li><a href="rawdataTable.html"><i class="menu-icon icon-signout"></i>模拟数据浏览 </a></li>
+                    </ul>
+                    <!--/.widget-nav-->
+                    <ul class="widget widget-menu unstyled">
+                        <li><a href="followdataTable.html"><i class="menu-icon icon-bullhorn"></i>关注度查询 </a>
+                        </li>
+                        <li><a href="charts.html"><i class="menu-icon icon-inbox"></i>关注度可视化 </a></li>
+                        <li><a href="singleFollowChart.html"><i class="menu-icon icon-tasks"></i>单个商品关注度可视化</a></li>
+                    </ul>
+
+
+                    <ul class="widget widget-menu unstyled">
+                        <li><a href="evalTable.html"><i class="menu-icon icon-table"></i>评估结果</a></li>
+                        <li><a href="evalCharts.html"><i class="menu-icon icon-book"></i>评估结果可视化</a></li>
+                        <li><a href="userRTable.html"><i class="menu-icon icon-paste"></i>用户推荐</a></li>
+                        <li><a href="itemRTable.html"><i class="menu-icon icon-table"></i>商品推荐 </a></li>
+                    </ul>
+
+                    <ul class="widget widget-menu unstyled">
+                        <li><a href="fpgTable.html"><i class="menu-icon icon-table"></i>关联规则查询</a></li>
+                        <li><a href="fpgCharts.html"><i class="menu-icon icon-book"></i>关联规则可视化</a></li>
+                    </ul>
+                    <!--/.widget-nav-->
+                    <ul class="widget widget-menu unstyled">
+                        <li><a class="collapsed" data-toggle="collapse" href="#togglePages"><i class="menu-icon icon-cog">
+                        </i><i class="icon-chevron-down pull-right"></i><i class="icon-chevron-up pull-right">
+                        </i>More Pages </a>
+                            <ul id="togglePages" class="collapse unstyled">
+                                <li><a href="#"><i class="icon-inbox"></i>Login </a></li>
+                                <li><a href="#"><i class="icon-inbox"></i>Profile </a></li>
+                                <li><a href="#"><i class="icon-inbox"></i>All Users </a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+                <!--/.sidebar-->
+            </div>
+
+            <div class="span9">
+                <div class="content">
+                    <div class="module">
+                        <div class="module-head">
+                            <h3>向用户推荐最感兴趣的商品</h3>
+                        </div>
+                        <div class="module-body table">
+                            <table cellpadding="0" cellspacing="0" border="0" class="datatable-1 table table-bordered table-striped	 display" width="100%">
+                                <thead>
+                                <tr>
+                                    <th>用户ID</th>
+                                    <th>商品ID</th>
+                                    <th>推荐评分</th>
+                                </tr>
+                                </thead>
+                                <tbody id="userRTable">
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th>用户ID</th>
+                                    <th>商品ID</th>
+                                    <th>推荐评分</th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div><!--/.module-->
+
+                    <br/>
+
+                </div><!--/.content-->
+            </div><!--/.span9-->
+        </div>
+    </div><!--/.container-->
+</div><!--/.wrapper-->
+
+<div class="footer">
+    <div class="container">
+        <b class="copyright">&copy; 2017 Spark计算电商商品可视化 - Janus </b>All rights reserved.
+    </div>
+</div>
+
+<script src="bootstrap/js/bootstrap.min.js"></script>
+<script src="scripts/datatables/jquery.dataTables.js"></script>
+<script>
+    $(document).ready(function() {
+        //alert("sdds");
+        //rawdata.fn.renderMain();
+        backUserRData();
+        $('.datatable-1').dataTable();
+        $('.dataTables_paginate').addClass("btn-group datatable-pagination");
+        $('.dataTables_paginate > a').wrapInner('<span />');
+        $('.dataTables_paginate > a:first-child').append('<i class="icon-chevron-left shaded"></i>');
+        $('.dataTables_paginate > a:last-child').append('<i class="icon-chevron-right shaded"></i>');
+    } );
+</script>
+<script>
+    function searchUserR(label) {
+        var value=label.value;
+        var text;
+        //alert(value);
+        var id=document.getElementById("userRTable");
+        //alert("test1");
+        if(value!=""){
+            text=userRdata.fn.searchUserRDataTable(value);
+        }else {
+            //alert("null:"+value);
+            text=userRdata.fn.showUserRDataTable();
+        }
+        //alert(text);
+        id.innerHTML=text;
+    }
+</script>
+</body>
+</html>
